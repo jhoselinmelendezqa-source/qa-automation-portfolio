@@ -1,19 +1,28 @@
 ﻿{
   "info": {
-    "name": "JSONPlaceholder API Tests",
+    "name": "JSONPlaceholder API Tests - CRUD & Negative",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Obtener usuario por ID",
+      "name": "GET - Obtener usuario por ID (200)",
       "event": [
         {
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test(\"Código de estado es 200 OK\", function () { pm.response.to.have.status(200); });",
-              "pm.test(\"El tiempo de respuesta es menor a 3000ms\", function () { pm.expect(pm.response.responseTime).to.be.below(3000); });",
-              "pm.test(\"La estructura del usuario contiene campos obligatorios\", function () { const jsonData = pm.response.json(); pm.expect(jsonData).to.have.property(\"id\", 1); pm.expect(jsonData).to.have.property(\"email\"); });"
+              "pm.test(\"Código de estado es 200 OK\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"El tiempo de respuesta es menor a 3000ms\", function () {",
+              "  pm.expect(pm.response.responseTime).to.be.below(3000);",
+              "});",
+              "pm.test(\"La estructura del usuario contiene campos obligatorios\", function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData).to.have.property(\"id\", 1);",
+              "  pm.expect(jsonData).to.have.property(\"email\");",
+              "  pm.expect(jsonData.email).to.be.a(\"string\").and.not.empty;",
+              "});"
             ],
             "type": "text/javascript"
           }
@@ -22,6 +31,115 @@
       "request": {
         "method": "GET",
         "url": "https://jsonplaceholder.typicode.com/users/1"
+      }
+    },
+    {
+      "name": "POST - Crear nuevo post (201)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Código de estado es 201 Created\", function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Responde con el título enviado y un ID asignado\", function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData).to.have.property(\"title\", \"QA Automation Portfolio Post\");",
+              "  pm.expect(jsonData).to.have.property(\"id\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"QA Automation Portfolio Post\",\n  \"body\": \"Validacion automatizada con Newman\",\n  \"userId\": 1\n}"
+        },
+        "url": "https://jsonplaceholder.typicode.com/posts"
+      }
+    },
+    {
+      "name": "PUT - Actualizar post existente (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Código de estado es 200 OK\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"El título actualizado se refleja en la respuesta\", function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData).to.have.property(\"title\", \"Post actualizado en QA\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 1,\n  \"title\": \"Post actualizado en QA\",\n  \"body\": \"Cuerpo actualizado\",\n  \"userId\": 1\n}"
+        },
+        "url": "https://jsonplaceholder.typicode.com/posts/1"
+      }
+    },
+    {
+      "name": "DELETE - Eliminar post (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Código de estado es 200 OK al eliminar\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "url": "https://jsonplaceholder.typicode.com/posts/1"
+      }
+    },
+    {
+      "name": "GET - Usuario inexistente devuelve 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Código de estado es 404 Not Found\", function () {",
+              "  pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/users/99999"
       }
     }
   ]
